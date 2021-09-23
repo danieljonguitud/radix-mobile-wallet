@@ -10,7 +10,7 @@
           <p class="mt-2 text-gray-600">{{ items.description }}</p>
         </div>
         <div class="flex justify-end mt-4">
-          <a href="#" class="text-xl font-medium text-indigo-500">{{ items.link }}</a>
+          <a @click="() => router.push(items.url)" class="text-xl font-medium text-indigo-500">{{ items.link }}</a>
         </div>
       </div>
     </div>
@@ -18,10 +18,15 @@
 </template>
 
 <script>
+import { useRouter } from 'vue-router'
 export default {
   name: "LoginCards.vue",
   props: {
     info: Array,
+  },
+  setup() {
+    const router = useRouter()
+    return { router }
   }
 }
 </script>

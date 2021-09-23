@@ -4,11 +4,21 @@ import Start from '../views/Start.vue'
 import Tab1 from '../views/Tab1.vue'
 import Tab2 from '../views/Tab2.vue'
 import Tab3 from '../views/Tab3.vue'
+import CreateWallet from "../views/CreateWallet"
+import AddWallet from "../views/AddWallet";
 
 const routes = [
   {
     path: '/',
     component: Start
+  },
+  {
+    path: '/create-wallet',
+    component: CreateWallet
+  },
+  {
+    path: '/add-wallet',
+    component: AddWallet
   },
   {
     path: '/tabs/',
