@@ -42,8 +42,7 @@ import {
   IonTitle,
   IonToolbar
 } from "@ionic/vue"
-import {SigningKeychain} from '@radixdlt/account'
-import {Mnemonic} from '@radixdlt/crypto'
+import { Mnemonic, Wallet, Network, SigningKeychain } from '@radixdlt/application'
 import {ref,} from 'vue'
 
 export default {
@@ -79,26 +78,51 @@ export default {
     const mnemonic = Mnemonic.generateNew()
 
     async function createWallet() {
+      // const saveKeystoreOnDisk = (keystore) => {
+      //   const filePath = './keystore.json'
+      //   const json = JSON.stringify(keystore, null, '\t')
+      //   return writeAsync(filePath, json)
+      // }
+
+      let keystoreK;
       const walletResult = await SigningKeychain.byEncryptingMnemonicAndSavingKeystore({
         mnemonic,
         password: password.value,
-        save: function (keystoreToSave) {
-          console.log(keystoreToSave)
-
-          return new Promise((resolve) => {
-            // TODO: write file here
-            resolve('okydokes')
-          })
+        save: function (keystore) {
+          keystoreK = keystore
+          console.log(password.value)
+          console.log(JSON.stringify(keystore))
+          return new Promise((resolve => {
+            resolve('YAY')
+          }))
         }
       })
 
-
       if(walletResult.isErr()) {
         console.log(`🤷‍♂️ Failed to create wallet: ${walletResult.error}`)
-      } else {
-        console.log(walletResult.value)
-        wallet = walletResult.value
       }
+
+      const signingKeychain = walletResult.value
+      const network = Network.TESTNET4
+      Wallet.create({
+        signingKeychain,
+        network
+      })
+
+      const signingKeychainResult = await SigningKeychain.byLoadingAndDecryptingKeystore({
+        password: password.value,
+        load: function () {
+          return new Promise((resolve => {
+            resolve(keystoreK)
+          }))
+        }
+      })
+
+      if (signingKeychainResult.isErr()) {
+        console.log(`🤷‍♂️ Failed to create wallet: ${walletResult.error}`)
+      }
+
+      console.log(signingKeychainResult._unsafeUnwrap().restoreLocalHDSigningKeysUpToIndex(1))
 
     }
 
